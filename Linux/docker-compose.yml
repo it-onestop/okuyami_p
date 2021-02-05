@@ -1,0 +1,19 @@
+version: '3.7'
+
+services:
+  postgres:
+    image: postgres:12.1  
+    ports:
+      - "5432:5432"
+    volumes:
+      - "../dbdata:/var/lib/postgresql/data"
+
+  web:
+    image: snavi:latest
+    command: bash -c "python manage.py migrate && python manage.py collectstatic --noinput && gunicorn inheritance_oss.wsgi --workers 10  -b 0.0.0.0:8000"
+    ports:
+      - 8000:8000
+    depends_on:
+      - postgres
+
+
